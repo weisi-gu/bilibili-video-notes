@@ -1,0 +1,18 @@
+# 每期工作目录（含下载的音频、转录产物），不入库
+_work/
+*.bak
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 本地私有配置与记忆（含 API Key 环境、会话记忆）
+.workbuddy/
+.env
+
+# 自带二进制不入库：ffmpeg/ffprobe 单文件约 164MB，
+# 超过 GitHub 单文件 100MB 硬上限，push 会被拒。
+# 请改用系统 ffmpeg，或 pip install imageio-ffmpeg（脚本已支持自动探测）。
+bin/

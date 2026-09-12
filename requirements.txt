@@ -1,0 +1,14 @@
+# 取数核心：元数据 get_info + 音频直链 get_download_url（匿名空 Credential 即可用）。
+bilibili-api-python>=17.0.0
+
+# 下载音频流用
+aiohttp>=3.9.0
+
+# 字幕二级兜底 —— 建议装：覆盖 player 接口拿不到的部分字幕，不装会直接掉到付费 ASR。
+# 想先确认某视频有没有字幕轨（避免白花 ASR 的钱）：
+#   yt-dlp --list-subs --skip-download <url>     # 只列出 danmaku（弹幕）= 无字幕轨
+yt-dlp>=2025.1.1
+
+# 可选：免系统安装的 ffmpeg（音频重封装 m4a 用）。
+# 不装也行：脚本会退回系统 ffmpeg，两者都没有时会直存音频流（多数 ASR 仍可接受）。
+imageio-ffmpeg>=0.4.9
