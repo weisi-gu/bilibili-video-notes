@@ -95,17 +95,23 @@ async def get_subtitle(bvid, cid):
 
 
 def pick_subtitle(sub):
+    """从字幕轨列表挑最合适的一条。
+
+    ⚠️ ai_type 语义：0 / 缺失 = 人工上传字幕（质量高）；非 0 = AI 生成字幕（质量较差）。
+    因此**优先人工字幕**，只在没有人工字幕时才退到 AI 字幕。
+    （旧实现把 `if ai_type` 当成"有 AI 字幕就先用"，恰好选反了质量顺序。）
+    同类内再按中文轨优先。
+    """
     lst = (sub or {}).get("list") or []
     if not lst:
         return None
-    ai = [s for s in lst if s.get("ai_type")]
-    if ai:
-        return ai[0]
+    human = [s for s in lst if not s.get("ai_type")]
+    pool = human or lst          # 有人工字幕就只在人工里挑，否则退到 AI 字幕
     for lan in ("zh-CN", "zh", "cn", "chi"):
-        for s in lst:
+        for s in pool:
             if s.get("lan") == lan:
                 return s
-    return lst[0]
+    return pool[0]
 
 
 def dl_json(url, cookie=""):

@@ -37,10 +37,12 @@ python scripts/fetch_bilibili.py "<BV号或B站链接>" --out ./_work
 - `shownotes.md` —— 视频简介 `desc`（供第 4 步当背景，等价于播客 shownotes）
 - `transcript.txt` —— **有字幕时** = 字幕纯文本（官方转录等价物，第 2 步直接用，跳过 ASR）
 - `subtitle.srt` —— 字幕带时间戳（有字幕时）
-- `audio.m4a` —— 音频（默认下载；ffmpeg 已自带于项目 `bin/`，自动重封装为标准 m4a，无需系统安装）
+- `audio.m4a` —— 音频（默认下载；检测到 ffmpeg 时自动重封装为标准 m4a，无 ffmpeg 则直存音频流）
+  - ⚠️ **仓库不含 ffmpeg 二进制**：`bin/` 已被 `.gitignore` 排除（单文件约 156 MB，超 GitHub 100 MB 上限）。clone 后需自行准备：系统装（winget/brew/apt）或 `pip install imageio-ffmpeg`。探测顺序 `PATH` → 项目 `bin/`（仅本地自建才有）→ `imageio-ffmpeg`。
 
 **字幕三级兜底**（脚本自动逐级尝试，前一级成功即停）：
-1. **player 接口字幕**：匿名直连 `api.bilibili.com/x/player/wbi/v2` 读 `data.subtitle.list`（AI 字幕优先，其次 zh-CN）—— 最准、零成本。
+1. **player 接口字幕**：匿名直连 `api.bilibili.com/x/player/wbi/v2` 读 `data.subtitle.list` —— 最准、零成本。
+   - **挑选顺序：人工字幕优先**（`ai_type` 为 0/缺失），无人工字幕才退到 AI 字幕（`ai_type` 非 0）；同类内中文轨（`zh-CN`）优先。
    - ⚠️ **不要用** `bilibili_api.Video.get_subtitle()`：实测空 Credential 下抛 `CredentialNoSessdataException`（"Credential 类未提供 sessdata"），匿名环境永远命中不了，会白白掉到付费 ASR。需要登录态字幕时设环境变量 `BILIBILI_SESSDATA`。
 2. **yt-dlp 字幕**（`--write-subs --write-auto-subs`）—— 兜底。
    - 前提：yt-dlp 必须能被找到（PATH / venv 的 Scripts / 项目 `bin/`）；找不到会**静默跳过**，直接掉到 ASR。

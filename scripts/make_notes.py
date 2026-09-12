@@ -64,6 +64,25 @@ def read(path):
         return ""
 
 
+def resolve(work, std_name, suffix):
+    """定位工作目录内的文件：优先标准名，不存在则回退到「<标题>-<std_name>」。
+
+    ⚠️ 为什么需要回退：SKILL.md 第 5 步要求交付时把 transcript.txt 原地重命名为
+    `<标题>-transcript.txt`。重命名后再跑本脚本（例如换个模板重出笔记）就会因为找不到
+    `transcript.txt` 而报错退出——这是真实的流程断裂。这里兼容重命名前后的两种状态。
+    """
+    p = os.path.join(work, std_name)
+    if os.path.isfile(p):
+        return p
+    try:
+        for f in sorted(os.listdir(work)):
+            if f.endswith(suffix):
+                return os.path.join(work, f)
+    except OSError:
+        pass
+    return p
+
+
 def classify(meta, shownotes, transcript_head):
     prompt = (
         "判断下面这期视频/播客最贴切的类型，只回复一个词，从这五个里选："
@@ -90,16 +109,17 @@ def main():
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
 
-    tpath = args.transcript or os.path.join(args.work, "transcript.txt")
+    tpath = args.transcript or resolve(args.work, "transcript.txt", "-transcript.txt")
     transcript = read(tpath)
     if not transcript.strip():
-        sys.exit(f"[错误] 逐字稿为空或不存在：{tpath}")
+        sys.exit(f"[错误] 逐字稿为空或不存在：{tpath}"
+                 f"（已在 {args.work} 内回退查找 *-transcript.txt；也可用 --transcript 显式指定）")
     meta = {}
     try:
         meta = json.loads(read(os.path.join(args.work, "meta.json")) or "{}")
     except Exception:
         pass
-    shownotes = read(os.path.join(args.work, "shownotes.md"))
+    shownotes = read(resolve(args.work, "shownotes.md", "-shownotes.md"))
 
     # 定类型
     typ = args.type
