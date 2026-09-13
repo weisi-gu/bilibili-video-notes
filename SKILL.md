@@ -114,7 +114,7 @@ ASR 对专有名词错字率高。动笔前先用 **`shownotes.md`（简介专�
 > **生成笔记是可选步骤，不是默认动作。** 进入本步前必须显式问用户"要不要出笔记 / 用哪个模板"。用户说"不用""跳过""先不生成"即停止，只交付转录稿（transcript.txt / .srt）。
 
 确认后，**由当前 agent 直接按模板写即可**（Claude Code / Codex / WorkBuddy / Cursor 等主流 AI Agent 都能胜任，这是推荐路径，且**不依赖任何 LLM API**）。
-仅在用户没有可用 Agent、或想离线批量生成时，才用备选 `scripts/make_notes.py`（配任意 OpenAI 兼容 LLM）或 `--dump-prompt`（导出提示词粘给网页版 AI）。
+也可用 `scripts/make_notes.py` 把逐字稿+模板组装成一份 `note_prompt.md` 草稿，整段粘给任意 AI 即可（无需 API Key）——脚本本身不调用任何 LLM。
 
 1. `view` 选定模板文件，按其结构和逐块说明填写。
 2. 每块都**输出填好的真实内容**，不用"详见原文""同上"占位，不留模板方括号说明。
@@ -158,8 +158,8 @@ ASR 对专有名词错字率高。动笔前先用 **`shownotes.md`（简介专�
 - **取数**：`bilibili-api-python`（元数据 `get_info` + 音频直链 `get_download_url`，匿名可用）、`aiohttp`（下载音频）、`yt-dlp`（字幕二级兜底，可选）
   - ⚠️ 字幕**不**走 `bilibili_api.Video.get_subtitle()`（空 Credential 必抛 `CredentialNoSessdataException`），改匿名直连 player 接口。
   - ⚠️ 许可：`bilibili-api-python` 是 **GPL-3.0-or-later**，import 即构成衍生作品，故本仓库以 **GPL-3.0** 分发（见根目录 `LICENSE`）。
-- **转录**：`DASHSCOPE_API_KEY`（阿里云百炼）
-- **写笔记**：`LLM_API_BASE` / `LLM_API_KEY` / `LLM_MODEL`（任意 OpenAI 兼容，可选；agent 自身也能写）
+- **转录**：`DASHSCOPE_API_KEY`（阿里云百炼，无字幕时才需要）
+- **写笔记**：由 AI Agent 直接完成（不依赖 LLM API）；`scripts/make_notes.py` 仅负责把逐字稿+模板组装成 `note_prompt.md` 草稿，不调用任何 LLM。
 
 ## 已自备音频 / 字幕的情况
 

@@ -5,9 +5,9 @@
 两条主线：
 
 1. **拿字幕**（主）：优先白嫖官方/AI 字幕，拿不到才付费走 ASR。
-2. **出笔记**（辅）：由**主流 AI Agent 直接完成**（推荐），或用任意 OpenAI 兼容模型生成。
+2. **出笔记**（辅）：由**主流 AI Agent 直接完成**（推荐，不依赖任何 LLM API）。
 
-> 笔记这一步**不强制依赖任何 LLM API**。把 `templates/` 里的模板和逐字稿一起交给
+> 笔记这一步**不依赖任何 LLM API**。把 `templates/` 里的模板和逐字稿一起交给
 > Claude Code / Codex / WorkBuddy / Cursor 等 Agent，让它直接写就行——这也是推荐路径。
 
 ---
@@ -22,7 +22,7 @@ python -m venv .venv && ./.venv/Scripts/pip install -r requirements.txt
 - `yt-dlp`：字幕二级兜底。
 - `aiohttp`：下载音频流。
 - `imageio-ffmpeg`：可选，免系统安装的 ffmpeg。
-- 详见下方「依赖与许可」关于 `bilibili-api-python` 的许可提示。
+- 依赖与许可：仓库以 **GPL-3.0** 分发（因 `bilibili-api-python` 为 GPL-3.0），详见根目录 `LICENSE`。
 
 ### ffmpeg（可选）
 
@@ -110,23 +110,16 @@ python scripts/transcribe.py --from-meta "./_work/<标题>" --out "./_work/<标�
 > `_work/<标题>/transcript.txt` 整理成一份中文笔记，写到 `_work/<标题>/notes.md`。
 
 主流 Agent（Claude Code / Codex / WorkBuddy / Cursor 等）都能直接完成，还能顺带联网核实代码与图表。
+这一步**不依赖任何 LLM API**。
 
-**备选 A：脚本调 LLM（任意 OpenAI 兼容接口）**
-
-```bash
-export LLM_API_BASE="https://api.deepseek.com/v1"
-export LLM_API_KEY="xxx"
-export LLM_MODEL="deepseek-chat"
-python scripts/make_notes.py --work "./_work/<标题>" --type auto
-```
-
-**备选 B：完全免 Key**
+**或：用本仓库的组装脚本。** 把材料拼成一份可直接粘贴的草稿（脚本本身不调用 LLM）：
 
 ```bash
-python scripts/make_notes.py --work "./_work/<标题>" --type knowledge --dump-prompt
+python scripts/make_notes.py --work "./_work/<标题>" --type knowledge
 ```
 
-脚本导出提示词到 `note_prompt.md`，整段粘给任意网页版 AI 即可。
+产出 `note_prompt.md`，整段粘给任意 AI（网页版或 Agent 均可）即生成笔记，无需 API Key。
+`--type` 必填：`finance` / `tech-business` / `interview` / `knowledge` / `general`。
 
 模板：`templates/` 下 `finance` / `tech-business` / `interview` / `knowledge` / `general`。
 
@@ -137,20 +130,15 @@ python scripts/make_notes.py --work "./_work/<标题>" --type knowledge --dump-p
 | 变量 | 用途 | 必需 |
 |---|---|---|
 | `DASHSCOPE_API_KEY` | ASR（第 2 步，无字幕时才需要） | 视情况 |
-| `LLM_API_BASE` / `LLM_API_KEY` / `LLM_MODEL` | 笔记生成（第 3 步备选 A） | 否 |
 | `BILIBILI_SESSDATA` | 登录态字幕 | 否 |
 
 ---
 
-## 依赖与许可
+## 许可
 
-- 本工具**依赖 `bilibili-api-python`**（GPL-3.0-or-later）做元数据与音频直链。由于代码层面 `import` 了它，
-  按 GPL 这属于**衍生作品**，因此本仓库以 **GPL-3.0** 分发（见根目录 `LICENSE`）。
-- **许可已统一为 GPL-3.0**（Copyright (C) 2026 weisi-gu）。早前曾尝试"去依赖保 MIT"，后恢复该依赖，
-  故 LICENSE 同步改为 GPL-3.0 以消除冲突。
-- 字幕读取**不**走 `bilibili_api.Video.get_subtitle()`（空 Credential 下必抛
-  `CredentialNoSessdataException`），而是匿名直连公开 player 接口，因此字幕路径的实现本身独立于该 GPL 库——
-  但整体仓库因 import 关系仍整体适用 GPL-3.0。
+本项目以 **GPL-3.0** 分发（Copyright (C) 2026 weisi-gu）。原因是代码依赖
+`bilibili-api-python`（GPL-3.0-or-later）——`import` 即构成衍生作品，故整体适用 GPL-3.0。
+完整依赖见 `requirements.txt`。
 
 ---
 
