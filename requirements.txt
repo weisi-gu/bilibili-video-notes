@@ -1,4 +1,4 @@
-# 取数核心：元数据 get_info + 音频直链 get_download_url（匿名空 Credential 即可用）。
+# 取数核心：元数据 get_info + 音频直链 get_download_url（二者匿名空 Credential 即可用）。
 bilibili-api-python>=17.0.0
 
 # 下载音频流用
