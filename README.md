@@ -5,10 +5,7 @@
 两条主线：
 
 1. **拿字幕**（主）：优先白嫖官方/AI 字幕，拿不到才付费走 ASR。
-2. **出笔记**（辅）：由**主流 AI Agent 直接完成**（推荐，不依赖任何 LLM API）。
-
-> 笔记这一步**不依赖任何 LLM API**。把 `templates/` 里的模板和逐字稿一起交给
-> Claude Code / Codex / WorkBuddy / Cursor 等 Agent，让它直接写就行——这也是推荐路径。
+2. **出笔记**（辅）：交给你的 AI Agent 直接完成（本仓库不内置任何 LLM 调用）。
 
 ---
 
@@ -18,11 +15,11 @@
 python -m venv .venv && ./.venv/Scripts/pip install -r requirements.txt
 ```
 
-- **核心依赖 `bilibili-api-python`**（取元数据 `get_info` + 音频直链 `get_download_url`，匿名空 Credential 即可用）。
+- **核心依赖 `bilibili-api-python`**（取元数据 `get_info` + 音频直链 `get_download_url`，**二者**匿名空 Credential 即可用）。
 - `yt-dlp`：字幕二级兜底。
 - `aiohttp`：下载音频流。
 - `imageio-ffmpeg`：可选，免系统安装的 ffmpeg。
-- 依赖与许可：仓库以 **GPL-3.0** 分发（因 `bilibili-api-python` 为 GPL-3.0），详见根目录 `LICENSE`。
+- 许可：**GPL-3.0**，详见根目录 `LICENSE` 与下方「许可」一节。
 
 ### ffmpeg（可选）
 
@@ -110,7 +107,6 @@ python scripts/transcribe.py --from-meta "./_work/<标题>" --out "./_work/<标�
 > `_work/<标题>/transcript.txt` 整理成一份中文笔记，写到 `_work/<标题>/notes.md`。
 
 主流 Agent（Claude Code / Codex / WorkBuddy / Cursor 等）都能直接完成，还能顺带联网核实代码与图表。
-这一步**不依赖任何 LLM API**。
 
 **或：用本仓库的组装脚本。** 把材料拼成一份可直接粘贴的草稿（脚本本身不调用 LLM）：
 
@@ -118,7 +114,7 @@ python scripts/transcribe.py --from-meta "./_work/<标题>" --out "./_work/<标�
 python scripts/make_notes.py --work "./_work/<标题>" --type knowledge
 ```
 
-产出 `note_prompt.md`，整段粘给任意 AI（网页版或 Agent 均可）即生成笔记，无需 API Key。
+产出 `note_prompt.md`，整段粘给任意 AI（网页版或 Agent 均可）即生成笔记。
 `--type` 必填：`finance` / `tech-business` / `interview` / `knowledge` / `general`。
 
 模板：`templates/` 下 `finance` / `tech-business` / `interview` / `knowledge` / `general`。

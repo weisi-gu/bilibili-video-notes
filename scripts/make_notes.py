@@ -10,7 +10,7 @@ templates/ 下的模板和逐字稿写笔记，还能联网核实代码、读图
   1. 直接让 Agent 读文件：把 `_work/<标题>/transcript.txt` + `templates/<类型>.md`
      交给 Agent，让它按模板结构写（推荐，Agent 还能联网核实）。
   2. 本脚本组装：运行后生成 `note_prompt.md`（系统指令 + 元数据 + shownotes + 模板 + 逐字稿），
-     整段粘给任意 AI 聊天框即可，无需 API Key。
+     整段粘给任意 AI 聊天框即可。
 
 用法：
   python make_notes.py --work ./_work/<标题> --type knowledge
@@ -102,7 +102,7 @@ def main():
         f.write("> 把下面【系统指令】和【内容】整段复制，粘贴给任意 AI"
                 "（Claude Code / Codex / WorkBuddy / Cursor / ChatGPT / DeepSeek / Gemini 等）即可生成笔记。\n\n"
                 "=== 系统指令 ===\n" + system + "\n\n=== 内容 ===\n" + user)
-    print(f"[完成] 笔记草稿已写入 {out}（交给任意 AI Agent 即可产出最终笔记，无需 API Key）。")
+    print(f"[完成] 笔记草稿已写入 {out}（交给任意 AI Agent 即可产出最终笔记）。")
 
 
 if __name__ == "__main__":
