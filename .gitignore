@@ -16,3 +16,6 @@ venv/
 # 超过 GitHub 单文件 100MB 硬上限，push 会被拒。
 # 请改用系统 ffmpeg，或 pip install imageio-ffmpeg（脚本已支持自动探测）。
 bin/
+
+# 项目提案草稿，所有者决定不公开发布
+PROPOSAL.md
